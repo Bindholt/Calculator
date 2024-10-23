@@ -1,6 +1,14 @@
 import Stack from "./stack.js";
 import Queue from "./queue.js";
 
+const precedence = {
+    "^": 5,
+    "*": 4,
+    "/": 3,
+    "+": 2,
+    "-": 1
+}
+
 function RPNCalculator(input) {
     const inputStack = input.split(" ");
     const resultStack = [];
@@ -46,17 +54,38 @@ function shuntingYardConversion(dataStr) {
 
     while(currentInput) {
         if(!isNaN(currentInput.data)) {
+            currentInput
             outputQueue.push(currentInput.data);
-        } else {
+        } else if (currentInput.data != "(" && currentInput.data != ")") {
+            let currentOperator = operatorStack.peek();
+            while (
+                currentOperator?.data != "(" && 
+                (precedence[currentOperator?.data] > precedence[currentInput.data]) || 
+                (precedence[currentOperator?.data] == precedence[currentInput.data] && currentInput.data != "^")
+            ) {
+                outputQueue.push(operatorStack.pop().data);
+                currentOperator = currentOperator.next;
+            }
             operatorStack.push(currentInput.data);
-            
+        } else if(currentInput.data == "(") {
+            operatorStack.push(currentInput.data);
+        } else if(currentInput.data == ")") {
+            let currentOperator = operatorStack.peek();
+            while(currentOperator.data != "(" && currentOperator.data != null) {
+                outputQueue.push(operatorStack.pop().data);
+                currentOperator = currentOperator.next;
+            }
+            if(operatorStack.peek().data == "(") {
+                operatorStack.pop();
+            }
         }
 
+        console.log("Token: [" + currentInput.data + "] Output: [" + outputQueue.dumpList() + "] Operator: [" + operatorStack.dumpList() + "] ");
+        console.log("====================================================================");
         currentInput = currentInput.next;
     }
 
     let currentOperator = operatorStack.peek();
-    
     while(currentOperator) {
         const operator = operatorStack.pop();
         outputQueue.push(operator.data);
@@ -64,12 +93,12 @@ function shuntingYardConversion(dataStr) {
     }
 
     let currentOutput = outputQueue.getHead();
-
     while(currentOutput) {
-        console.log(currentOutput.data);
         returnStr += currentOutput.data + " ";
         currentOutput = currentOutput.next;
     }
+
+    console.log(returnStr);
     return returnStr.trim();
 }
 
@@ -90,4 +119,5 @@ function realCalculator(input) {
     return RPNCalculator(RPNInput);
 }
 
-console.log(realCalculator("3 + 4"));
+console.log(realCalculator("3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3"));
+

@@ -33,10 +33,12 @@ export default class Stack {
     dumpList(){
         if(this.head) {
             let current = this.head;
+            let dump = "";
             while(current) {
-                console.log(current.data);
+                dump += current.data + " ";
                 current = current.next;
             }
+            return dump;
         }
     }
 }

@@ -52,10 +52,12 @@ export default class Queue {
     dumpList(){
         if(this._head) {
             let current = this._head;
+            let dump = "";
             while(current) {
-                console.log(current.data);
+                dump += current.data + " ";
                 current = current.next;
             }
+            return dump;
         }
     }
 }
