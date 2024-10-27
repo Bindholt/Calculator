@@ -10,18 +10,24 @@ const precedence = {
 }
 
 function RPNCalculator(input) {
-    const inputStack = input.split(" ");
-    const resultStack = [];
+    const resultStack = new Stack();
+    const inputQueue = new Queue();
 
-    for(input in inputStack) {
-        if(!isNaN(inputStack[input])) {
-            inputStack[input] = Number(inputStack[input]);
-            resultStack.push(inputStack[input]);
+    const inputs = input.split(" ");
+    inputs.forEach(input => {
+        inputQueue.push(input);
+    });
+
+    let currentInput = inputQueue.getHead();
+    while(currentInput) {
+        const token = currentInput.data;
+        if(!isNaN(token)) {
+            resultStack.push(Number(token));
         } else {
-            const num1 = resultStack.pop();
-            const num2 = resultStack.pop();
+            const num1 = resultStack.pop().data;
+            const num2 = resultStack.pop().data;
 
-            switch(inputStack[input]){
+            switch(token){
                 case "+":
                     resultStack.push(num1 + num2);
                     break;
@@ -41,8 +47,9 @@ function RPNCalculator(input) {
                     break;
             }
         }
+        currentInput = currentInput.next;
     }
-    return resultStack;
+    return resultStack.peek().data;
 }
 
 
@@ -54,7 +61,6 @@ function shuntingYardConversion(dataStr) {
 
     while(currentInput) {
         if(!isNaN(currentInput.data)) {
-            currentInput
             outputQueue.push(currentInput.data);
         } else if (currentInput.data != "(" && currentInput.data != ")") {
             let currentOperator = operatorStack.peek();
@@ -120,4 +126,4 @@ function realCalculator(input) {
 }
 
 console.log(realCalculator("3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3"));
-
+// console.log(RPNCalculator("3 4 5 + *"))

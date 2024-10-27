@@ -15,6 +15,9 @@ export default class Stack {
     }
 
     pop() {
+        if(!this.head) {
+            return null;
+        }
         const node = this.head;
         this.head = this.head.next;
         return node;
@@ -23,7 +26,6 @@ export default class Stack {
     peek() {
         return this.head;
     }
-
 
     clear() {
         this.head = null;
